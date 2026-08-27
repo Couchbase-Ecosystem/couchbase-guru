@@ -1,0 +1,53 @@
+name: PyPI Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+*" # Match tags like v0.1.0, v1.2.3, v1.2.3-alpha.1
+  workflow_dispatch:
+
+jobs:
+  pypi-publish:
+    name: Build and publish Python distributions to PyPI
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Required for trusted publishing
+      contents: write # Required for creating releases
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install uv with python 3.11
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: latest
+          python-version: 3.11
+
+      - name: Build package
+        run: uv build
+
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+
+      - name: Determine release type
+        id: release-type
+        run: |
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+          echo "Tag: $TAG_NAME"
+          # Stable = strict vX.Y.Z with no suffix; anything else (rc, alpha,
+          # beta, dev, ...) is flagged as a pre-release on the GitHub release.
+          if [[ "$TAG_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+            echo "This is a STABLE release: $TAG_NAME"
+          else
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+            echo "This is a PRE-RELEASE: $TAG_NAME"
+          fi
+
+      - name: Generate changelog and create release
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
+        with:
+          generate_release_notes: true
+          prerelease: ${{ steps.release-type.outputs.prerelease }}
+          files: dist/*

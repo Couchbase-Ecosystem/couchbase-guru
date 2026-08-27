@@ -1,0 +1,32 @@
+name: Test PyPI Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+*" # Match tags like v0.1.0, v1.2.3, v1.2.3-alpha.1
+  workflow_dispatch:
+
+jobs:
+  test-pypi-publish:
+    name: Build and publish Python distributions to Test PyPI
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Required for trusted publishing
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install uv with python 3.11
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: latest
+          python-version: 3.11
+
+      - name: Build package
+        run: uv build
+
+      - name: Publish package to TestPyPI
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        with:
+          repository-url: https://test.pypi.org/legacy/

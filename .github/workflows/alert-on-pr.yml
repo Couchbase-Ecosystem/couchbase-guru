@@ -1,0 +1,74 @@
+name: Alert on PR Changes
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  alert:
+    # Only run this job if:
+    # - The event is 'pull_request' and the PR is from the same repository (not a fork), OR
+    # - The event is 'pull_request_target' and the PR is from a forked repository.
+    # This ensures that PRs from forks are handled with 'pull_request_target' (for security),
+    # while PRs from the same repo are handled with 'pull_request'.
+    if: >-
+      (
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository
+      ) ||
+      (
+        github.event_name == 'pull_request_target' &&
+        github.event.pull_request.head.repo.full_name != github.repository
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+
+      - name: Install requests
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Send Slack alert on PR changes
+        env:
+          SLACK_WEBHOOK: ${{ secrets.DEVEX_ALERTS_SECRET }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        shell: python
+        run: |
+          import os, requests
+          repo = os.environ['REPO']
+          pr_number = os.environ['PR_NUMBER']
+          token = os.environ['GITHUB_TOKEN']
+          api_url = f"https://api.github.com/repos/{repo}/pulls/{pr_number}"
+          headers = {'Authorization': f'token {token}', 'Accept': 'application/vnd.github.v3+json'}
+          pr_resp = requests.get(api_url, headers=headers, timeout=15)
+          if pr_resp.ok:
+              pr = pr_resp.json()
+              branch_name = pr.get('head', {}).get('ref') or os.environ.get('GITHUB_HEAD_REF', '')
+              pr_title = pr.get('title', '')
+              pr_body = pr.get('body', '')
+              pr_user = pr.get('user', {}).get('login', '')
+              pr_url = pr.get('html_url', '')
+              prefix = "PR Alert from Forked Repo!" if pr.get('head', {}).get('repo', {}).get('fork') else "PR Alert!"
+              message = f"{prefix}\nTitle: {pr_title}\nBranch: {branch_name}\nAuthor: {pr_user}\nURL: {pr_url}\nDescription: {pr_body}"
+          else:
+              message = f"PR Alert!\nUnable to fetch PR details.\nStatus Code: {pr_resp.status_code}\nResponse: {pr_resp.text}"
+          webhook = os.environ.get('SLACK_WEBHOOK', '').strip()
+          if webhook and webhook.startswith(("http://", "https://")):
+              try:
+                  resp = requests.post(webhook, json={"text": message}, timeout=15)
+                  resp.raise_for_status()
+              except Exception as e:
+                  print(f"Slack notification failed: {e}")
+          else:
+              print("SLACK_WEBHOOK missing or invalid; skipping Slack notification.")

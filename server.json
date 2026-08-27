@@ -1,0 +1,143 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.Couchbase-Ecosystem/couchbase-guru",
+  "description": "Search the Couchbase documentation from your MCP client via a hosted documentation agent.",
+  "repository": {
+    "url": "https://github.com/Couchbase-Ecosystem/couchbase-guru",
+    "source": "github"
+  },
+  "version": "0.1.0rc1",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "couchbase-guru",
+      "version": "0.1.0rc1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "CB_MCP_TRANSPORT",
+          "description": "Transport mode for the server (stdio or http). Default is stdio.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "name": "CB_MCP_HOST",
+          "description": "Host to run the MCP server on (default: 127.0.0.1). Used only for HTTP transport mode.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "name": "CB_MCP_PORT",
+          "description": "Port to run the MCP server on (default: 8000). Used only for HTTP transport mode.",
+          "isRequired": false,
+          "format": "number",
+          "isSecret": false
+        },
+        {
+          "name": "CB_AGENT_BASE_URL",
+          "description": "Base URL of the documentation agent backend. Set this to run against your own self-hosted agent; if unset, the public agent is used.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "name": "CB_AGENT_IP_SALT",
+          "description": "Secret salt used to pseudonymize client IPs (HTTP transport). Set a shared value for consistent hashing across multiple instances; a local salt is generated when unset.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": true
+        }
+      ],
+      "packageArguments": [
+        {
+          "type": "named",
+          "name": "--transport",
+          "description": "Transport mode for the server (stdio or http). Default is stdio.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "type": "named",
+          "name": "--host",
+          "description": "Host to run the MCP server on (default: 127.0.0.1). Used only for HTTP transport mode.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "type": "named",
+          "name": "--port",
+          "description": "Port to run the MCP server on (default: 8000). Used only for HTTP transport mode.",
+          "isRequired": false,
+          "format": "number",
+          "isSecret": false
+        },
+        {
+          "type": "named",
+          "name": "--agent-base-url",
+          "description": "Base URL of the documentation agent backend. Set this to run against your own self-hosted agent; if unset, the public agent is used.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "type": "named",
+          "name": "--agent-ip-salt",
+          "description": "Secret salt used to pseudonymize client IPs (HTTP transport). Set a shared value for consistent hashing across multiple instances; a local salt is generated when unset.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": true
+        }
+      ]
+    },
+    {
+      "registryType": "oci",
+      "identifier": "docker.io/couchbaseecosystem/couchbase-guru:0.1.0rc1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "CB_MCP_TRANSPORT",
+          "description": "Transport mode for the server (stdio or http). Default is stdio.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "name": "CB_MCP_HOST",
+          "description": "Host to run the MCP server on (default: 127.0.0.1). Used only for HTTP transport mode.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "name": "CB_MCP_PORT",
+          "description": "Port to run the MCP server on (default: 8000). Used only for HTTP transport mode.",
+          "isRequired": false,
+          "format": "number",
+          "isSecret": false
+        },
+        {
+          "name": "CB_AGENT_BASE_URL",
+          "description": "Base URL of the documentation agent backend. Set this to run against your own self-hosted agent; if unset, the public agent is used.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "name": "CB_AGENT_IP_SALT",
+          "description": "Secret salt used to pseudonymize client IPs (HTTP transport). Set a shared value for consistent hashing across multiple instances; a local salt is generated when unset.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}
