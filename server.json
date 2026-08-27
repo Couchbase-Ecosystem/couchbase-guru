@@ -6,12 +6,12 @@
     "url": "https://github.com/Couchbase-Ecosystem/couchbase-guru",
     "source": "github"
   },
-  "version": "0.1.0rc1",
+  "version": "0.1.0",
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "couchbase-guru",
-      "version": "0.1.0rc1",
+      "version": "0.1.0",
       "transport": {
         "type": "stdio"
       },
@@ -97,7 +97,7 @@
     },
     {
       "registryType": "oci",
-      "identifier": "docker.io/couchbaseecosystem/couchbase-guru:0.1.0rc1",
+      "identifier": "docker.io/couchbaseecosystem/couchbase-guru:0.1.0",
       "transport": {
         "type": "stdio"
       },
