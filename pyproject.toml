@@ -1,6 +1,6 @@
 [project]
 name = "couchbase-guru"
-version = "0.1.0rc1"
+version = "0.1.0"
 description = "Couchbase Guru MCP Server - search Couchbase documentation from your MCP client."
 readme = "README.md"
 requires-python = ">=3.10,<3.15"
