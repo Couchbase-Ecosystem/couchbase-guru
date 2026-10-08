@@ -67,11 +67,13 @@ async def create_mcp_session() -> AsyncIterator[ClientSession]:
         env=env,
     )
 
-    async with asyncio.timeout(DEFAULT_TIMEOUT):
-        async with stdio_client(params) as (read_stream, write_stream):
-            async with ClientSession(read_stream, write_stream) as session:
-                await session.initialize()
-                yield session
+    async with (
+        asyncio.timeout(DEFAULT_TIMEOUT),
+        stdio_client(params) as (read_stream, write_stream),
+        ClientSession(read_stream, write_stream) as session,
+    ):
+        await session.initialize()
+        yield session
 
 
 def extract_payload(response: Any) -> Any:
