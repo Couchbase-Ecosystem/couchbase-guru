@@ -13,6 +13,7 @@ Guidance for AI agents and automated maintainers working in this repository. Hum
 - Package manager is **uv** with a committed `uv.lock`. Do not switch to pip-tools, Poetry, or another workflow, and always commit `pyproject.toml` and `uv.lock` together.
 - Runtime dependencies (`click`, `fastmcp`, `httpx`) use ranges in `pyproject.toml`. Refresh the lock within those ranges with `uv lock --upgrade`. Changing an upper bound (for example a new `fastmcp` major) changes what PyPI users install, so do it in its own PR and run the live integration test.
 - Dev dependencies under `[project.optional-dependencies].dev` are exact pins. When bumping `ruff`, also bump the `ruff-pre-commit` `rev` in `.pre-commit-config.yaml` to the same version.
+- Dev pins must still resolve on Python 3.10. For example, `pre-commit` 4.7.0+ requires Python >=3.11, so it stays at 4.6.2 until the project drops 3.10. `uv lock` fails on the 3.10 split if a pin breaks this.
 - `requires-python = ">=3.10,<3.15"`. CI tests Python 3.10 and 3.13. When testing locally against a specific interpreter, set `UV_PYTHON=<version>` so `uv run` does not recreate `.venv` with the `.python-version` default (3.13).
 - GitHub Actions are pinned by commit SHA with a version comment. Keep that format when updating actions.
 
