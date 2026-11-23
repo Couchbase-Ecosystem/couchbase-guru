@@ -48,7 +48,7 @@ couchbase-guru/
 │   └── cb_mcp/
 │       ├── __init__.py
 │       ├── tools/
-│       │   ├── __init__.py      # TOOLS, TOOL_ANNOTATIONS, get_tools()
+│       │   ├── __init__.py      # _TOOL_SPECS registry, register_tools()
 │       │   └── docs.py          # ask_couchbase_docs tool
 │       └── utils/
 │           ├── __init__.py
@@ -121,7 +121,7 @@ Please add tests for new behavior and cover both success and error paths.
 ### Adding a new tool
 
 1. Create the tool function in a module under `src/cb_mcp/tools/`.
-2. Register it in `tools/__init__.py`: import it, append to `TOOLS`, and add an entry to `TOOL_ANNOTATIONS`.
+2. Register it in `tools/__init__.py`: import it and add a `_ToolSpec(fn, ToolAnnotations(...))` entry to `_TOOL_SPECS`.
 3. Add unit tests (and an integration test if it calls the backend).
 4. Test it with a real MCP client.
 
